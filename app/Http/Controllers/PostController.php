@@ -29,14 +29,21 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        if($request->hasFile("image")){
-            $imageName=$request->file("image")->getClientOriginalName()."-".time().$request->file("image")->getClientOriginalExtension();
-            $request->file("image")->move(public_path("/images/posts"),$imageName);
+        $images=array();
+        
+        if($files=$request->file("image")){
+            foreach($files as $file){
+            $imageN=$file->getClientOriginalName()."-".time().$file->getClientOriginalExtension();
+            $imageName=$imageN;
+            $file->move(public_path("/images/posts"),$imageN);
+            $images[]=$imageName;
+
+            }
         }
         Post::create([
             "title"=>$request->title,
             "description"=>$request->description,
-            "image"=>$imageName
+            "image"=>implode("|",$images)
         ]);
         return redirect()->route("posts.index");
     }
@@ -62,14 +69,23 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        if($request->hasFile("image")){
-            $imageName=$request->file("image")->getClientOriginalName()."-".time().$request->file("image")->getClientOriginalExtension();
-            $request->file("image")->move(public_path("/images/posts"),$imageName);
+        $images=array();
+        
+        if($files=$request->file("image")){
+            foreach($files as $file){
+            $imageN=$file->getClientOriginalName()."-".time().$file->getClientOriginalExtension();
+            $imageName=$imageN;
+            $file->move(public_path("/images/posts"),$imageN);
+            $images[]=$imageName;
+
+            }
+        }else{
+            $images[]=$post->image;
         }
         $post->update([
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'image' => $imageName
+            'title' => $request->title,
+            'description' => $request->description,
+            "image"=>implode("|",$images)
         ]);
  
         return redirect()->route('posts.index'); 

@@ -5,8 +5,10 @@
  <form action="{{route('posts.store')}}" method="POST" enctype="multipart/form-data">
     @csrf
     <input class="form-control" type="text" name="title" placeholder="post title">
+    <br>
     <textarea class="form-control" name="description" placeholder="post placeholder" ></textarea>
-    <input class="form-control" type="file" name="image">
+    <br>
+    <input class="form-control" type="file" name="image[]" multiple>
     <input type="submit" value="send" class="btn btn-secondary mt-5">
  </form>
  @endsection
