@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+ 
 
 class PostController extends Controller
 {
@@ -21,6 +24,7 @@ class PostController extends Controller
      */
     public function create()
     {
+    
         return view("posts.create");
     }
 
@@ -33,17 +37,20 @@ class PostController extends Controller
         
         if($files=$request->file("image")){
             foreach($files as $file){
-            $imageN=$file->getClientOriginalName()."-".time().$file->getClientOriginalExtension();
+            $imageN=$file->getClientOriginalName()."-".time().".".$file->getClientOriginalExtension();
             $imageName=$imageN;
             $file->move(public_path("/images/posts"),$imageN);
             $images[]=$imageName;
 
             }
+           /* $images=json_encode($images);
+            dd($images);*/
         }
         Post::create([
             "title"=>$request->title,
             "description"=>$request->description,
             "image"=>implode("|",$images)
+            /*"image"=>$images*/
         ]);
         return redirect()->route("posts.index");
     }
@@ -73,19 +80,31 @@ class PostController extends Controller
         
         if($files=$request->file("image")){
             foreach($files as $file){
-            $imageN=$file->getClientOriginalName()."-".time().$file->getClientOriginalExtension();
+            $imageN=$file->getClientOriginalName()."-".time().".".$file->getClientOriginalExtension();
             $imageName=$imageN;
             $file->move(public_path("/images/posts"),$imageN);
             $images[]=$imageName;
 
             }
+            $x = explode ("|", $post->image);
+            foreach($x as $val){
+             $image_path=public_path("/images/posts/".$val);
+             if(file_exists($image_path))
+              {
+               unlink($image_path);
+              }
+            }
         }else{
             $images[]=$post->image;
         }
+        /*$images=json_encode($images);
+        dd($images);*/
         $post->update([
             'title' => $request->title,
             'description' => $request->description,
             "image"=>implode("|",$images)
+            /*"image"=>$images*/
+
         ]);
  
         return redirect()->route('posts.index'); 
@@ -97,6 +116,16 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $this->authorize("manageUser",User::class);
+            $x = explode ("|", $post->image);
+            foreach($x as $val){
+             $image_path=public_path("/images/posts/".$val);
+             if(file_exists($image_path))
+              {
+               unlink($image_path);
+              }
+            }
+        
         $post->delete();
         return redirect()->route('posts.index');
     }

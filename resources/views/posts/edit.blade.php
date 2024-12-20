@@ -13,6 +13,8 @@
     <lable for="image">
     @php 
     $x = explode ("|", $post->image);
+    /*$x =json_decode($post->image);
+    dd($x);*/
     @endphp
      @foreach($x as $val)
      <img src="/images/posts/{{$val}}">
