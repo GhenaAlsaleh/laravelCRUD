@@ -16,6 +16,7 @@ class PostController extends Controller
     public function index()
     {
         $posts=Post::all();
+        
         return view("posts.index",compact("posts"));
     }
 
@@ -33,6 +34,11 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            "title"=>"required|string",
+            "description"=>"required|string",
+            "image"=>"required|array"
+        ]);
         $images=array();
         
         if($files=$request->file("image")){
@@ -43,14 +49,13 @@ class PostController extends Controller
             $images[]=$imageName;
 
             }
-           /* $images=json_encode($images);
-            dd($images);*/
+        
         }
         Post::create([
             "title"=>$request->title,
             "description"=>$request->description,
-            "image"=>implode("|",$images)
-            /*"image"=>$images*/
+            /*"image"=>implode("|",$images)*/
+            'image'=>$images
         ]);
         return redirect()->route("posts.index");
     }
@@ -79,6 +84,11 @@ class PostController extends Controller
         $images=array();
         
         if($files=$request->file("image")){
+            $request->validate([
+                "title"=>"required|string",
+                "description"=>"required|string",
+                "image"=>"required|array"
+            ]);
             foreach($files as $file){
             $imageN=$file->getClientOriginalName()."-".time().".".$file->getClientOriginalExtension();
             $imageName=$imageN;
@@ -86,7 +96,8 @@ class PostController extends Controller
             $images[]=$imageName;
 
             }
-            $x = explode ("|", $post->image);
+            /*$x = explode ("|", $post->image);*/
+            $x=$post->image;
             foreach($x as $val){
              $image_path=public_path("/images/posts/".$val);
              if(file_exists($image_path))
@@ -94,18 +105,24 @@ class PostController extends Controller
                unlink($image_path);
               }
             }
+            $post->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                /*"image"=>implode("|",$images)*/
+                "image"=>$images
+    
+            ]);
         }else{
-            $images[]=$post->image;
-        }
-        /*$images=json_encode($images);
-        dd($images);*/
-        $post->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            "image"=>implode("|",$images)
-            /*"image"=>$images*/
+            $request->validate([
+                "title"=>"required|string",
+                "description"=>"required|string"
+            ]);
+            $post->update([
+                'title' => $request->title,
+                'description' => $request->description,
+            ]);
 
-        ]);
+        }
  
         return redirect()->route('posts.index'); 
     
@@ -117,7 +134,8 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $this->authorize("manageUser",User::class);
-            $x = explode ("|", $post->image);
+            /*$x = explode ("|", $post->image);*/
+            $x=$post->image;
             foreach($x as $val){
              $image_path=public_path("/images/posts/".$val);
              if(file_exists($image_path))

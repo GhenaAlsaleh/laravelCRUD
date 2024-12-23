@@ -12,9 +12,8 @@
     <input class="form-control" type="file" name="image[]" id="image" multiple>
     <lable for="image">
     @php 
-    $x = explode ("|", $post->image);
-    /*$x =json_decode($post->image);
-    dd($x);*/
+    /*$x = explode ("|", $post->image);*/
+    $x=$post->image;
     @endphp
      @foreach($x as $val)
      <img src="/images/posts/{{$val}}">

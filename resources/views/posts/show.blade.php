@@ -3,10 +3,7 @@
 @section("content")
   <div class="card mb-5 mt-5">
     @php 
-    $x = explode ("|", $post->image);
-    /*$x =json_decode($post->image);
-    dd($x);*/
-   
+    $x =$post->image;
     @endphp
      @foreach($x as $val)
      <img src="/images/posts/{{$val}}">

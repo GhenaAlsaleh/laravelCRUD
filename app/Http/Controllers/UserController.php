@@ -30,6 +30,12 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $this->authorize("manageUser",User::class);
+        $request->validate([
+            "name"=>"required|string",
+            "email"=>"required|string|email|unique:users,email",
+            "password"=>"required|string|min:5",
+            "is_admin"=>"required|boolean"
+        ]);
         User::create([
             "name"=>$request->name,
             "email"=>$request->email,
@@ -52,6 +58,12 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $this->authorize("manageUser",User::class);
+        $request->validate([
+            "name"=>"required|string",
+            "email"=>"required|string|email|unique:users,email",
+            "password"=>"required|string|min:5",
+            "is_admin"=>"required|boolean"
+        ]);
         $user->update([
             "name"=>$request->name,
             "email"=>$request->email,

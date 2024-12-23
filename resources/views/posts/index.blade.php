@@ -9,15 +9,15 @@
  <a href="{{route('posts.create')}}" class="btn btn-primary mb-5">add new post</a>
  <br>
  @can('manageUser',Auth::user())
- <a href="{{route('users.index')}}" class="btn btn-primary mb-5 mt-5">show all users</a>
+ <a href="{{route('users.index')}}" class="btn btn-primary mb-5">show all users</a>
  @endcan
 
  @forelse($posts as $post)
   <div class="card">
     @php 
-    $x = explode ("|", $post->image);
-    /*$x =json_decode($post->image);
-    dd($x);*/
+    /*$x=json_decode(json_encode($post->image,true));*/
+    $x=$post->image;
+    /*$x = explode ("|", $post->image);*/
     @endphp
     <div class="d-flex ">
      @foreach($x as $val)

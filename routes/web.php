@@ -7,10 +7,10 @@ use App\Http\Controllers\UserController;
 
 Route::middleware("guest")->group(function()
 {
-    Route::get("/",[AuthController::class,"showLoginForm"])->name("login");
-    Route::post("/",[AuthController::class,"login"]);
 
 });
+Route::get("/",[AuthController::class,"showLoginForm"])->name("login");
+Route::post("/",[AuthController::class,"login"]);
 Route::middleware("auth")->group(function()
 {
     Route::post("/logout",[AuthController::class,"logout"])->name("logout");
